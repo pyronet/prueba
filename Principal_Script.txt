@@ -30,3 +30,59 @@ CREATE TABLE Empleado (
     FOREIGN KEY (id_empleado) REFERENCES Usuario(id_usuario),
     FOREIGN KEY (id_hotel) REFERENCES Hotel(id_hotel)
 );
+
+-- Nivel 2: Estructura de habitaciones y servicios
+CREATE TABLE TipoHabitacion (
+    id_tipo INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50),
+    descripcion TEXT,
+    capacidad INT
+);
+
+CREATE TABLE Habitacion (
+    id_habitacion INT AUTO_INCREMENT PRIMARY KEY,
+    numero VARCHAR(10),
+    id_hotel INT,
+    id_tipo INT,
+    permite_mascotas BOOLEAN,
+    movilidad_reducida BOOLEAN,
+    FOREIGN KEY (id_hotel) REFERENCES Hotel(id_hotel),
+    FOREIGN KEY (id_tipo) REFERENCES TipoHabitacion(id_tipo)
+);
+
+CREATE TABLE Servicio (
+    id_servicio INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    descripcion TEXT
+);
+
+CREATE TABLE HabitacionServicio (
+    id_habitacion INT,
+    id_servicio INT,
+    PRIMARY KEY (id_habitacion, id_servicio),
+    FOREIGN KEY (id_habitacion) REFERENCES Habitacion(id_habitacion),
+    FOREIGN KEY (id_servicio) REFERENCES Servicio(id_servicio)
+);
+
+-- Nivel 3: Gestión de reservas
+CREATE TABLE Reserva (
+    id_reserva INT AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT,
+    id_habitacion INT,
+    fecha_inicio DATETIME,
+    fecha_fin DATETIME,
+    estado ENUM('activa', 'modificada', 'cancelada'),
+    fecha_reserva DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente),
+    FOREIGN KEY (id_habitacion) REFERENCES Habitacion(id_habitacion)
+);
+
+-- Nivel 4: Personal de limpieza
+CREATE TABLE Limpieza (
+    id_limpieza INT AUTO_INCREMENT PRIMARY KEY,
+    id_habitacion INT,
+    fecha DATETIME,
+    tipo ENUM('entrada', 'salida'),
+    observaciones TEXT,
+    FOREIGN KEY (id_habitacion) REFERENCES Habitacion(id_habitacion)
+);
